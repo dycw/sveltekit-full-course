@@ -1,3 +1,3 @@
-# `template`
+# SvelteKit Full Course (Fireship.io)
 
-Template for generic repositories
+- https://fireship.io/courses/sveltekit/
