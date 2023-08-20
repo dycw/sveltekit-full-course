@@ -1,6 +1,7 @@
 # SvelteKit Full Course (Fireship.io)
 
 - https://fireship.io/courses/sveltekit/
+- https://github.com/fireship-io/fkit-course
 
 # create-svelte
 
