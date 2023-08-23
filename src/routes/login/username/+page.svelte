@@ -9,6 +9,13 @@
 
   let debounceTimer: NodeJS.Timeout;
 
+  const re = /^(?=[a-zA-Z0-9._]{3,16}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+
+  $: isValid =
+    username?.length >= 3 && username.length <= 16 && re.test(username);
+  $: isTouched = username.length > 0;
+  $: isTaken = isValid && !isAvailable && !loading;
+
   async function checkAvailability() {
     isAvailable = false;
     clearTimeout(debounceTimer);
@@ -62,10 +69,27 @@
       class="input w-full"
       bind:value={username}
       on:input={checkAvailability}
+      class:input-error={!isValid && isTouched}
+      class:input-warning={isTaken}
+      class:input-success={isAvailable && isValid && !loading}
     />
+    <div class="min-h-16 my-4 w-full px-8">
+      {#if loading}
+        <p class="text-secondary">Checking availability of @{username}...</p>
+      {/if}
 
-    <p>Is available? {isAvailable}</p>
+      {#if !isValid && isTouched}
+        <p class="text-sm text-error">
+          must be 3-16 characters long, alphanumeric only
+        </p>
+      {/if}
 
-    <button class="btn btn-success">Confirm username @{username} </button>
+      {#if isValid && !isAvailable && !loading}
+        <p class="text-sm text-warning">
+          @{username} not available
+        </p>
+      {/if}
+      <button class="btn btn-success">Confirm username @{username} </button>
+    </div>
   </form>
 </AuthCheck>
