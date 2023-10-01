@@ -2,23 +2,25 @@
   import AuthCheck from "$lib/components/AuthCheck.svelte";
   import { db, user, userData } from "$lib/firebase";
   import { doc, getDoc, writeBatch } from "firebase/firestore";
-
   let username = "";
   let loading = false;
   let isAvailable = false;
-
   let debounceTimer: NodeJS.Timeout;
 
   const re = /^(?=[a-zA-Z0-9._]{3,16}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
 
   $: isValid =
-    username?.length >= 3 && username.length <= 16 && re.test(username);
+    username?.length > 2 && username.length < 16 && re.test(username);
   $: isTouched = username.length > 0;
   $: isTaken = isValid && !isAvailable && !loading;
 
-  async function checkAvailability() {
+  function checkAvailability() {
     isAvailable = false;
     clearTimeout(debounceTimer);
+    if (!isValid) {
+      loading = false;
+      return;
+    }
 
     loading = true;
 
@@ -34,19 +36,17 @@
   }
 
   async function confirmUsername() {
-    console.log("confirming username ", username);
+    console.log("confirming username", username);
     const batch = writeBatch(db);
     batch.set(doc(db, "usernames", username), { uid: $user?.uid });
     batch.set(doc(db, "users", $user!.uid), {
       username,
       photoURL: $user?.photoURL ?? null,
-
       published: true,
       bio: "I am the Walrus",
       links: [
         {
           title: "Test Link",
-
           url: "https://kung.foo",
           icon: "custom",
         },
@@ -94,10 +94,13 @@
 
         {#if isValid && !isAvailable && !loading}
           <p class="text-sm text-warning">
-            @{username} not available
+            @{username} is not available
           </p>
         {/if}
-        <button class="btn btn-success">Confirm username @{username} </button>
+
+        {#if isAvailable}
+          <button class="btn btn-success">Confirm username @{username} </button>
+        {/if}
       </div>
     </form>
   {/if}

@@ -1,9 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
+import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { derived, writable } from "svelte/store";
 import type { Readable } from "svelte/motion";
+import { derived, writable } from "svelte/store";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1Ak-MlO9Kb-eioj7REhTVku29QAFm2VE",
@@ -25,7 +25,6 @@ function userStore() {
 
   if (!auth || !globalThis.window) {
     console.warn("Auth is not initialized or not in browser");
-
     const { subscribe } = writable<User | null>(null);
     return { subscribe };
   }
@@ -56,20 +55,29 @@ export const user = userStore();
 
 export function docStore<T>(path: string) {
   let unsubscribe: () => void;
+
   const docRef = doc(db, path);
+
   const { subscribe } = writable<T | null>(null, (set) => {
     unsubscribe = onSnapshot(docRef, (snapshot) => {
       set((snapshot.data() as T) ?? null);
     });
+
     return () => unsubscribe();
   });
-  return { subscribe, ref: docRef, id: docRef.id };
+
+  return {
+    subscribe,
+    ref: docRef,
+    id: docRef.id,
+  };
 }
 
 interface UserData {
   username: string;
   bio: string;
   photoURL: string;
+  published: boolean;
   links: any[];
 }
 
