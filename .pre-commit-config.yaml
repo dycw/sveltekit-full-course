@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/dycw/pre-commit-hooks
-    rev: 0.8.26
+    rev: 0.8.29
     hooks:
       - id: run-bump2version
   - repo: https://github.com/pre-commit/mirrors-prettier

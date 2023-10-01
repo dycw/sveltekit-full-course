@@ -10,13 +10,16 @@
       href="/login/username"
       class="step"
       class:step-primary={$page.route.id?.match(/username|photo/g)}
-      >Choose Username</a
     >
+      Choose Username
+    </a>
     <a
       href="/login/photo"
       class="step"
-      class:step-primary={$page.route.id?.includes("photo")}>Upload Photo</a
+      class:step-primary={$page.route.id?.includes("photo")}
     >
+      Upload Photo
+    </a>
   </ul>
 </nav>
 
